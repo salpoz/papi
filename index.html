@@ -1,1 +1,460 @@
-<h1>Hello from Salaam</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAPI Glide Slope Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #fafafa;
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #2c3e50;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.2em;
+            font-weight: 300;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            color: #6c757d;
+            font-size: 1em;
+            font-weight: 400;
+        }
+
+        .formula-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 32px;
+            border-left: 4px solid #007bff;
+        }
+
+        .formula-section h3 {
+            color: #495057;
+            font-size: 1.1em;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .formula {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            background: white;
+            padding: 16px;
+            border-radius: 6px;
+            margin: 12px 0;
+            text-align: center;
+            font-size: 1.05em;
+            color: #495057;
+            border: 1px solid #dee2e6;
+        }
+
+        .papi-grid {
+            margin: 32px 0;
+        }
+
+        .grid-header {
+            display: grid;
+            grid-template-columns: 80px 120px 120px 120px 1fr;
+            gap: 16px;
+            padding: 16px 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            font-size: 0.9em;
+            font-weight: 500;
+            color: #6c757d;
+            text-align: center;
+        }
+
+        .papi-row {
+            display: grid;
+            grid-template-columns: 80px 120px 120px 120px 1fr;
+            gap: 16px;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 2px;
+            transition: all 0.2s ease;
+            align-items: center;
+            background: white;
+            border: 1px solid #e9ecef;
+        }
+
+        .papi-row:hover {
+            background: #f8f9fa;
+            border-color: #dee2e6;
+        }
+
+        .papi-row.active {
+            background: #e8f5e8;
+            border-color: #28a745;
+        }
+
+        .papi-label {
+            font-weight: 500;
+            color: #2c3e50;
+            font-size: 1em;
+            text-align: center;
+        }
+
+        .input-wrapper {
+            position: relative;
+            text-align: center;
+        }
+
+        .angle-input {
+            width: 100%;
+            padding: 12px 8px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 0.95em;
+            text-align: center;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .angle-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        .position-info {
+            font-size: 0.9em;
+            color: #6c757d;
+            text-align: left;
+            padding-left: 8px;
+        }
+
+        .calculate-section {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .calculate-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            letter-spacing: 0.5px;
+        }
+
+        .calculate-btn:hover {
+            background: #0056b3;
+            transform: translateY(-1px);
+        }
+
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+
+        .result-section {
+            background: #007bff;
+            color: white;
+            padding: 32px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 32px;
+            display: none;
+        }
+
+        .result-value {
+            font-size: 3em;
+            font-weight: 200;
+            margin: 16px 0;
+            letter-spacing: -1px;
+        }
+
+        .result-label {
+            font-size: 1.1em;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .result-breakdown {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 0.95em;
+            opacity: 0.9;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            font-size: 0.7em;
+            font-weight: 500;
+            padding: 4px 8px;
+            border-radius: 12px;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 24px;
+                margin: 20px 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .grid-header, .papi-row {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                text-align: center;
+            }
+            
+            .position-info {
+                text-align: center;
+                padding-left: 0;
+            }
+            
+            .result-value {
+                font-size: 2.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>PAPI Glide Slope Calculator</h1>
+            <p>Precision Approach Path Indicator Analysis</p>
+        </div>
+
+
+
+        <div class="papi-grid">
+            <div class="grid-header">
+                <div>Box</div>
+                <div>Degrees</div>
+                <div>Minutes</div>
+                <div>Decimal</div>
+                <div>Position</div>
+            </div>
+
+            <div class="papi-row">
+                <div class="papi-label">A</div>
+                <div class="input-wrapper">
+                    <input type="number" id="degrees-a" class="angle-input" placeholder="0" step="0.01" oninput="updateFromDegrees('a')">
+                </div>
+                <div class="input-wrapper">
+                    <input type="number" id="minutes-a" class="angle-input" placeholder="0" step="1" oninput="updateFromMinutes('a')">
+                </div>
+                <div class="input-wrapper">
+                    <input type="number" id="decimal-a" class="angle-input" placeholder="0.00" step="0.01" oninput="updateFromDecimal('a')">
+                </div>
+                <div class="position-info">Farthest from runway</div>
+            </div>
+
+            <div class="papi-row active">
+                <div class="papi-label">B</div>
+                <div class="input-wrapper">
+                    <input type="number" id="degrees-b" class="angle-input" placeholder="0" step="0.01" oninput="updateFromDegrees('b')">
+                </div>
+                <div class="input-wrapper">
+                    <input type="number" id="minutes-b" class="angle-input" placeholder="0" step="1" oninput="updateFromMinutes('b')">
+                </div>
+                <div class="input-wrapper">
+                    <input type="number" id="decimal-b" class="angle-input" placeholder="0.00" step="0.01" oninput="updateFromDecimal('b')">
+                </div>
+                <div class="position-info">Used in calculation</div>
+            </div>
+
+            <div class="papi-row active">
+                <div class="papi-label">C</div>
+                <div class="input-wrapper">
+                    <input type="number" id="degrees-c" class="angle-input" placeholder="0" step="0.01" oninput="updateFromDegrees('c')">
+                </div>
+                <div class="input-wrapper">
+                    <input type="number" id="minutes-c" class="angle-input" placeholder="0" step="1" oninput="updateFromMinutes('c')">
+                </div>
+                <div class="input-wrapper">
+                    <input type="number" id="decimal-c" class="angle-input" placeholder="0.00" step="0.01" oninput="updateFromDecimal('c')">
+                </div>
+                <div class="position-info">Used in calculation</div>
+            </div>
+
+            <div class="papi-row">
+                <div class="papi-label">D</div>
+                <div class="input-wrapper">
+                    <input type="number" id="degrees-d" class="angle-input" placeholder="0" step="0.01" oninput="updateFromDegrees('d')">
+                </div>
+                <div class="input-wrapper">
+                    <input type="number" id="minutes-d" class="angle-input" placeholder="0" step="1" oninput="updateFromMinutes('d')">
+                </div>
+                <div class="input-wrapper">
+                    <input type="number" id="decimal-d" class="angle-input" placeholder="0.00" step="0.01" oninput="updateFromDecimal('d')">
+                </div>
+                <div class="position-info">Closest to runway</div>
+            </div>
+        </div>
+
+        <div class="calculate-section">
+            <button class="calculate-btn" onclick="calculateGlideSlope()">
+                Calculate Glide Slope
+            </button>
+        </div>
+
+        <div class="result-section" id="result-section">
+            <div class="result-label">Glide Slope Angle</div>
+            <div class="result-value" id="result-value">0° 0'</div>
+            <div class="result-breakdown" id="result-breakdown"></div>
+        </div>
+    </div>
+
+    <script>
+        let isUpdating = false;
+
+        function convertToDecimal(degrees, minutes) {
+            const deg = parseFloat(degrees) || 0;
+            const min = parseFloat(minutes) || 0;
+            return deg + (min / 60);
+        }
+
+        function convertFromDecimal(decimal) {
+            const dec = parseFloat(decimal) || 0;
+            const degrees = Math.floor(Math.abs(dec));
+            const minutes = (Math.abs(dec) - degrees) * 60;
+            return {
+                degrees: dec < 0 ? -degrees : degrees,
+                minutes: minutes
+            };
+        }
+
+        function updateFromDegrees(box) {
+            if (isUpdating) return;
+            isUpdating = true;
+
+            const degreesValue = document.getElementById(`degrees-${box}`).value;
+            const minutesValue = document.getElementById(`minutes-${box}`).value;
+            
+            if (degreesValue !== '' || minutesValue !== '') {
+                const decimal = convertToDecimal(degreesValue, minutesValue);
+                document.getElementById(`decimal-${box}`).value = decimal.toFixed(2);
+            }
+
+            isUpdating = false;
+            clearResults();
+        }
+
+        function updateFromMinutes(box) {
+            if (isUpdating) return;
+            isUpdating = true;
+
+            const degreesValue = document.getElementById(`degrees-${box}`).value;
+            const minutesValue = document.getElementById(`minutes-${box}`).value;
+            
+            if (degreesValue !== '' || minutesValue !== '') {
+                const decimal = convertToDecimal(degreesValue, minutesValue);
+                document.getElementById(`decimal-${box}`).value = decimal.toFixed(2);
+            }
+
+            isUpdating = false;
+            clearResults();
+        }
+
+        function updateFromDecimal(box) {
+            if (isUpdating) return;
+            isUpdating = true;
+
+            const decimalValue = document.getElementById(`decimal-${box}`).value;
+            
+            if (decimalValue !== '') {
+                const converted = convertFromDecimal(decimalValue);
+                document.getElementById(`degrees-${box}`).value = converted.degrees.toString();
+                document.getElementById(`minutes-${box}`).value = converted.minutes.toFixed(0);
+            }
+
+            isUpdating = false;
+            clearResults();
+        }
+
+        function getDecimalValue(box) {
+            const decimalValue = document.getElementById(`decimal-${box}`).value;
+            return parseFloat(decimalValue) || 0;
+        }
+
+        function clearResults() {
+            const resultSection = document.getElementById('result-section');
+            if (resultSection.style.display === 'block') {
+                resultSection.style.display = 'none';
+            }
+        }
+
+        function calculateGlideSlope() {
+            const papiA = getDecimalValue('a');
+            const papiB = getDecimalValue('b');
+            const papiC = getDecimalValue('c');
+            const papiD = getDecimalValue('d');
+
+            if (papiB === 0 && papiC === 0) {
+                alert('Please enter values for PAPI B and/or C to calculate the glide slope.');
+                return;
+            }
+
+            const glideslope = (papiB + papiC) / 2;
+
+            // Convert glide slope to degrees and minutes
+            const glideSlopeDegrees = Math.floor(Math.abs(glideslope));
+            const glideSlopeMinutes = Math.round((Math.abs(glideslope) - glideSlopeDegrees) * 60);
+            const glideSlopeSign = glideslope < 0 ? '-' : '';
+
+            const resultSection = document.getElementById('result-section');
+            const resultValue = document.getElementById('result-value');
+            const resultBreakdown = document.getElementById('result-breakdown');
+
+            resultValue.textContent = `${glideSlopeSign}${glideSlopeDegrees}° ${glideSlopeMinutes}'`;
+            
+            let breakdown = `<div><strong>Calculation:</strong> (${papiB.toFixed(2)}° + ${papiC.toFixed(2)}°) ÷ 2 = ${glideSlopeSign}${glideSlopeDegrees}° ${glideSlopeMinutes}' (${glideslope.toFixed(2)}°)</div>`;
+            breakdown += `<div style="margin-top: 12px; font-size: 0.9em;">`;
+            breakdown += `A: ${papiA.toFixed(2)}° • B: ${papiB.toFixed(2)}° • C: ${papiC.toFixed(2)}° • D: ${papiD.toFixed(2)}°</div>`;
+            
+            resultBreakdown.innerHTML = breakdown;
+            resultSection.style.display = 'block';
+            resultSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        document.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                calculateGlideSlope();
+            }
+        });
+    </script>
+</body>
+</html>
